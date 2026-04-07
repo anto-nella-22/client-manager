@@ -1,0 +1,10 @@
+Hello {{ invoice.project.client.name }},
+
+Please find attached invoice {{ invoice.number }} for {{ invoice.project.title }}.
+
+Amount due: ${{ invoice.amount }}
+Status: {{ invoice.get_status_display }}
+
+Thank you,
+Client Manager
+

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block title %}Clients | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        <span class="page-eyebrow">Directory</span>
+        <h1 class="page-title">Clients</h1>
+        <p class="page-subtitle">A reusable list page pattern for customer records, company context, and contact details.</p>
+    </div>
+</section>
+
+<section class="app-card">
+    <div class="filters-row">
+        <div>
+            <p class="meta-label mb-1">Client Archive</p>
+            <p class="muted-copy">Use this table shell as the base for other searchable indexes.</p>
+        </div>
+    </div>
+    <div class="table-shell">
+        <div class="table-responsive">
+            <table class="app-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client in clients %}
+                        <tr>
+                            <td>
+                                <span class="item-title">{{ client.name }}</span>
+                            </td>
+                            <td>{{ client.company }}</td>
+                            <td>{{ client.email }}</td>
+                            <td class="text-numeric">{{ client.phone }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center text-soft py-4">No clients yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

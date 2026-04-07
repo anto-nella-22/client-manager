@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Login | Client Manager{% endblock %}
+
+{% block content %}
+<section class="app-auth-layout">
+    <div class="app-auth-story">
+        <div class="app-auth-story-inner">
+            <span class="page-eyebrow">Client Workspace</span>
+            <h1 class="page-title">A quieter, more intentional way to manage clients.</h1>
+            <p class="page-subtitle">
+                This workspace follows your Architectural Minimalist direction: layered surfaces,
+                editorial typography, and calm financial data presentation.
+            </p>
+            <div class="row g-3 mt-4">
+                <div class="col-sm-6">
+                    <div class="stat-card status-pillar">
+                        <p class="stat-label">Revenue View</p>
+                        <p class="stat-value text-numeric">12 mo</p>
+                        <p class="stat-note">Chart-first dashboard with premium spacing.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="stat-card status-pillar status-warm">
+                        <p class="stat-label">Invoice Flow</p>
+                        <p class="stat-value">PDF + Email</p>
+                        <p class="stat-note">Invoices stay polished from draft to delivery.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="app-auth-card">
+        <div class="app-auth-card-inner">
+            <span class="page-eyebrow">Sign In</span>
+            <h2 class="h3 mb-3">Welcome back</h2>
+            <p class="text-soft">Use the demo admin account created by `seed_demo`.</p>
+            <form method="post" class="detail-stack">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button class="app-button-primary w-100" type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

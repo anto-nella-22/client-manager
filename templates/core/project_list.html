@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Projects | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        <span class="page-eyebrow">Work Index</span>
+        <h1 class="page-title">Projects</h1>
+        <p class="page-subtitle">Search and filter active client work instantly using a reusable list-and-filter pattern.</p>
+    </div>
+</section>
+
+<section class="app-card">
+    <div class="filters-row">
+        <div>
+            <p class="meta-label mb-1">Project Filters</p>
+            <p class="muted-copy">This filter header is designed to be reused on other table pages.</p>
+        </div>
+        <div class="filter-controls">
+            <input id="projectSearch" type="search" class="app-input" placeholder="Search projects or clients">
+            <select id="projectStatusFilter" class="app-select">
+                <option value="">All statuses</option>
+                {% for value, label in projects.model.Status.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="table-shell">
+        <div class="table-responsive">
+            <table class="app-table" id="projectTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Client</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                        <th>Budget</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                        <tr data-status="{{ project.status }}">
+                            <td>
+                                <span class="item-title">{{ project.title }}</span>
+                                <span class="item-subtitle">{{ project.client.name }}</span>
+                            </td>
+                            <td>{{ project.client.company }}</td>
+                            <td><span class="status-badge">{{ project.get_status_display }}</span></td>
+                            <td class="text-numeric">{{ project.deadline }}</td>
+                            <td class="text-numeric">${{ project.budget }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center text-soft py-4">No projects yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const projectSearch = document.getElementById("projectSearch");
+    const projectStatusFilter = document.getElementById("projectStatusFilter");
+    const projectRows = Array.from(document.querySelectorAll("#projectTable tbody tr[data-status]"));
+
+    function filterProjectRows() {
+        const query = projectSearch.value.toLowerCase();
+        const status = projectStatusFilter.value;
+
+        projectRows.forEach((row) => {
+            const matchesQuery = row.textContent.toLowerCase().includes(query);
+            const matchesStatus = !status || row.dataset.status === status;
+            row.style.display = matchesQuery && matchesStatus ? "" : "none";
+        });
+    }
+
+    projectSearch.addEventListener("input", filterProjectRows);
+    projectStatusFilter.addEventListener("change", filterProjectRows);
+</script>
+{% endblock %}

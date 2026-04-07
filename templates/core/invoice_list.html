@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Invoices | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        <span class="page-eyebrow">Billing Index</span>
+        <h1 class="page-title">Invoices</h1>
+        <p class="page-subtitle">Client-side search and status filters for quick follow-up, using the same reusable list scaffolding.</p>
+    </div>
+</section>
+
+<section class="app-card">
+    <div class="filters-row">
+        <div>
+            <p class="meta-label mb-1">Invoice Filters</p>
+            <p class="muted-copy">Search by number, project, or client and narrow by lifecycle status.</p>
+        </div>
+        <div class="filter-controls">
+            <input id="invoiceSearch" type="search" class="app-input" placeholder="Search number, project, or client">
+            <select id="invoiceStatusFilter" class="app-select">
+                <option value="">All statuses</option>
+                {% for value, label in invoices.model.Status.choices %}
+                    <option value="{{ value }}">{{ label }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="table-shell">
+        <div class="table-responsive">
+            <table class="app-table" id="invoiceTable">
+                <thead>
+                    <tr>
+                        <th>Number</th>
+                        <th>Project</th>
+                        <th>Client</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Sent</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                        <tr data-status="{{ invoice.status }}">
+                            <td>
+                                <a class="item-title" href="{% url 'invoice_detail' invoice.pk %}">{{ invoice.number }}</a>
+                            </td>
+                            <td>{{ invoice.project.title }}</td>
+                            <td>{{ invoice.project.client.company }}</td>
+                            <td><span class="status-badge">{{ invoice.get_status_display }}</span></td>
+                            <td class="text-numeric">${{ invoice.amount }}</td>
+                            <td class="text-numeric">{{ invoice.sent_date|default:"-" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center text-soft py-4">No invoices yet.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const invoiceSearch = document.getElementById("invoiceSearch");
+    const invoiceStatusFilter = document.getElementById("invoiceStatusFilter");
+    const invoiceRows = Array.from(document.querySelectorAll("#invoiceTable tbody tr[data-status]"));
+
+    function filterInvoiceRows() {
+        const query = invoiceSearch.value.toLowerCase();
+        const status = invoiceStatusFilter.value;
+
+        invoiceRows.forEach((row) => {
+            const matchesQuery = row.textContent.toLowerCase().includes(query);
+            const matchesStatus = !status || row.dataset.status === status;
+            row.style.display = matchesQuery && matchesStatus ? "" : "none";
+        });
+    }
+
+    invoiceSearch.addEventListener("input", filterInvoiceRows);
+    invoiceStatusFilter.addEventListener("change", filterInvoiceRows);
+</script>
+{% endblock %}

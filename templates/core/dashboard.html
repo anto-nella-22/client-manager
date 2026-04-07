@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        <span class="page-eyebrow">Overview</span>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Revenue snapshot, active work, and invoice activity staged with quiet hierarchy.</p>
+    </div>
+</section>
+
+<section class="panel hero-panel mb-4">
+    <div class="row g-4 hero-grid">
+        <div class="col-lg-8">
+            <div class="panel-inset hero-main">
+                <span class="page-eyebrow">Revenue Story</span>
+                <h2 class="h3 mb-3">Cash flow stays visible without crowding the room.</h2>
+                <p class="page-subtitle mb-4">Monthly revenue, active work, and current invoice activity stay on one canvas with enough negative space to scan fast.</p>
+                <div class="chart-shell">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="panel-inset hero-side">
+                <span class="page-eyebrow">Recent Activity</span>
+                <h2 class="h4 mb-3">Latest invoices</h2>
+                <div class="list-stack">
+                    {% for invoice in recent_invoices %}
+                        <a href="{% url 'invoice_detail' invoice.pk %}" class="list-item">
+                            <div class="d-flex justify-content-between align-items-start gap-3">
+                                <div>
+                                    <span class="item-title">{{ invoice.number }}</span>
+                                    <span class="item-subtitle">{{ invoice.project.title }} · {{ invoice.project.client.company }}</span>
+                                </div>
+                                <span class="status-badge">{{ invoice.get_status_display }}</span>
+                            </div>
+                        </a>
+                    {% empty %}
+                        <p class="muted-copy mb-0">No invoices yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4">
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card status-pillar">
+            <p class="stat-label">Clients</p>
+            <p class="stat-value text-numeric">{{ client_count }}</p>
+            <p class="stat-note">Trusted relationships currently tracked.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card status-pillar">
+            <p class="stat-label">Projects</p>
+            <p class="stat-value text-numeric">{{ project_count }}</p>
+            <p class="stat-note">Open engagements across all client accounts.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card status-pillar status-warm">
+            <p class="stat-label">Invoices</p>
+            <p class="stat-value text-numeric">{{ invoice_count }}</p>
+            <p class="stat-note">Billing records ready for follow-up or payment.</p>
+        </div>
+    </div>
+    <div class="col-md-6 col-xl-3">
+        <div class="stat-card status-pillar">
+            <p class="stat-label">Revenue</p>
+            <p class="stat-value text-numeric">${{ total_revenue }}</p>
+            <p class="stat-note">{{ time_entry_hours }} tracked hours behind delivered work.</p>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById("revenueChart");
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                label: "Paid revenue",
+                data: {{ chart_data|safe }},
+                borderColor: "#00327d",
+                backgroundColor: "rgba(37, 89, 189, 0.12)",
+                fill: true,
+                tension: 0.35,
+                pointRadius: 0,
+                pointHoverRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: "#57657a"
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: {
+                        color: "rgba(195, 198, 213, 0.35)"
+                    },
+                    ticks: {
+                        color: "#57657a"
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}{{ invoice.number }} | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        <span class="page-eyebrow">Invoice Detail</span>
+        <h1 class="page-title">{{ invoice.number }}</h1>
+        <p class="page-subtitle">{{ invoice.project.title }} for {{ invoice.project.client.company }} in a reusable detail-page layout.</p>
+    </div>
+</section>
+
+<section class="detail-grid">
+    <div class="detail-panel">
+        <div class="detail-main">
+            <div class="d-flex justify-content-between align-items-start gap-3 mb-4">
+                <div>
+                    <p class="meta-label mb-2">Museum Label</p>
+                    <h2 class="h3 mb-2">{{ invoice.project.title }}</h2>
+                    <p class="muted-copy mb-0">{{ invoice.project.client.company }}</p>
+                </div>
+                <span class="status-badge">{{ invoice.get_status_display }}</span>
+            </div>
+            <div class="detail-meta-grid">
+                <div>
+                    <p class="detail-label">Client</p>
+                    <div class="detail-stack">
+                        <p class="detail-value">{{ invoice.project.client.name }}</p>
+                        <p class="detail-value text-soft">{{ invoice.project.client.email }}</p>
+                        <p class="detail-value text-soft text-numeric">{{ invoice.project.client.phone }}</p>
+                    </div>
+                </div>
+                <div>
+                    <p class="detail-label">Billing</p>
+                    <div class="detail-stack">
+                        <p class="data-number">${{ invoice.amount }}</p>
+                        <p class="detail-value text-soft"><strong>Sent:</strong> {{ invoice.sent_date|default:"Not sent yet" }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="detail-panel">
+        <div class="detail-side">
+            <p class="meta-label mb-2">Actions</p>
+            <h2 class="h4 mb-3">Invoice workflow</h2>
+            <p class="muted-copy mb-4">Use this action rail as the base pattern for other detail pages with exports, email, and file actions.</p>
+            <div class="detail-actions">
+                <a class="app-button-primary" href="{% url 'invoice_pdf' invoice.pk %}" target="_blank">Generate PDF</a>
+                <form method="post" action="{% url 'invoice_email' invoice.pk %}">
+                    {% csrf_token %}
+                    <button class="app-button-secondary w-100" type="submit">Email Invoice</button>
+                </form>
+                {% if invoice.pdf_file %}
+                    <a class="app-button-tertiary" href="{{ invoice.pdf_file.url }}">Saved PDF</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
