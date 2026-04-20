@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 
 {% block title %}Invoices | Client Manager{% endblock %}
 
@@ -8,6 +9,10 @@
         <span class="page-eyebrow">Billing Index</span>
         <h1 class="page-title">Invoices</h1>
         <p class="page-subtitle">Client-side search and status filters for quick follow-up, using the same reusable list scaffolding.</p>
+    </div>
+    <div class="page-actions">
+        <a class="app-button-primary" href="{% url 'invoice_create' %}">Create Invoice</a>
+        <a class="app-button-secondary" href="{% url 'project_create' %}">Add Project</a>
     </div>
 </section>
 
@@ -48,13 +53,15 @@
                             </td>
                             <td>{{ invoice.project.title }}</td>
                             <td>{{ invoice.project.client.company }}</td>
-                            <td><span class="status-badge">{{ invoice.get_status_display }}</span></td>
-                            <td class="text-numeric">${{ invoice.amount }}</td>
+                            <td>{% include "core/includes/status_badge.html" with value=invoice.status label=invoice.get_status_display %}</td>
+                            <td class="text-numeric">{{ invoice.amount|currency }}</td>
                             <td class="text-numeric">{{ invoice.sent_date|default:"-" }}</td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="6" class="text-center text-soft py-4">No invoices yet.</td>
+                            <td colspan="6">
+                                {% include "core/includes/empty_state.html" with title="No invoices yet" body="Create an invoice when a project reaches a billing milestone or needs to be sent to a client." primary_url=invoice_create_url primary_label="Create your first invoice" secondary_url=project_create_url secondary_label="Create a project first" %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

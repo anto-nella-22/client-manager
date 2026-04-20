@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 
 {% block title %}Projects | Client Manager{% endblock %}
 
@@ -8,6 +9,10 @@
         <span class="page-eyebrow">Work Index</span>
         <h1 class="page-title">Projects</h1>
         <p class="page-subtitle">Search and filter active client work instantly using a reusable list-and-filter pattern.</p>
+    </div>
+    <div class="page-actions">
+        <a class="app-button-primary" href="{% url 'project_create' %}">Add Project</a>
+        <a class="app-button-secondary" href="{% url 'client_create' %}">Add Client First</a>
     </div>
 </section>
 
@@ -43,17 +48,19 @@
                     {% for project in projects %}
                         <tr data-status="{{ project.status }}">
                             <td>
-                                <span class="item-title">{{ project.title }}</span>
+                                <a class="item-title" href="{% url 'project_update' project.pk %}">{{ project.title }}</a>
                                 <span class="item-subtitle">{{ project.client.name }}</span>
                             </td>
                             <td>{{ project.client.company }}</td>
-                            <td><span class="status-badge">{{ project.get_status_display }}</span></td>
+                            <td>{% include "core/includes/status_badge.html" with value=project.status label=project.get_status_display %}</td>
                             <td class="text-numeric">{{ project.deadline }}</td>
-                            <td class="text-numeric">${{ project.budget }}</td>
+                            <td class="text-numeric">{{ project.budget|currency }}</td>
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="5" class="text-center text-soft py-4">No projects yet.</td>
+                            <td colspan="5">
+                                {% include "core/includes/empty_state.html" with title="No projects yet" body="Create a project once a client is onboarded so deadlines, budgets, and invoices have a home." primary_url=project_create_url primary_label="Create your first project" secondary_url=client_create_url secondary_label="Create a client first" %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

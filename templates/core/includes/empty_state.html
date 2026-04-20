@@ -1,0 +1,12 @@
+<div class="empty-state">
+    <p class="item-title">{{ title }}</p>
+    <p class="muted-copy">{{ body }}</p>
+    {% if primary_url and primary_label %}
+        <div class="page-actions">
+            <a class="app-button-primary" href="{{ primary_url }}">{{ primary_label }}</a>
+            {% if secondary_url and secondary_label %}
+                <a class="app-button-tertiary" href="{{ secondary_url }}">{{ secondary_label }}</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>

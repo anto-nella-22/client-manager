@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load core_extras %}
 
 {% block title %}Dashboard | Client Manager{% endblock %}
 
@@ -8,6 +9,11 @@
         <span class="page-eyebrow">Overview</span>
         <h1 class="page-title">Dashboard</h1>
         <p class="page-subtitle">Revenue snapshot, active work, and invoice activity staged with quiet hierarchy.</p>
+    </div>
+    <div class="page-actions">
+        <a class="app-button-primary" href="{% url 'invoice_create' %}">Create Invoice</a>
+        <a class="app-button-secondary" href="{% url 'client_create' %}">New Client</a>
+        <a class="app-button-tertiary" href="{% url 'project_create' %}">New Project</a>
     </div>
 </section>
 
@@ -35,7 +41,7 @@
                                     <span class="item-title">{{ invoice.number }}</span>
                                     <span class="item-subtitle">{{ invoice.project.title }} · {{ invoice.project.client.company }}</span>
                                 </div>
-                                <span class="status-badge">{{ invoice.get_status_display }}</span>
+                                {% include "core/includes/status_badge.html" with value=invoice.status label=invoice.get_status_display %}
                             </div>
                         </a>
                     {% empty %}
@@ -44,6 +50,33 @@
                 </div>
             </div>
         </div>
+    </div>
+</section>
+
+<section class="app-card mb-4">
+    <div class="filters-row">
+        <div>
+            <p class="meta-label mb-1">Recommended Next Steps</p>
+            <p class="muted-copy">These actions give the user an obvious starting point instead of leaving the dashboard as a passive report.</p>
+        </div>
+    </div>
+    <div class="quick-actions-grid">
+        <a class="quick-action-card text-decoration-none" href="{% url 'client_create' %}">
+            <span class="item-title">Add a client</span>
+            <span class="item-subtitle">Start a relationship record with contact details and company context.</span>
+        </a>
+        <a class="quick-action-card text-decoration-none" href="{% url 'project_create' %}">
+            <span class="item-title">Open a project</span>
+            <span class="item-subtitle">Create a new engagement and set budget, deadline, and status.</span>
+        </a>
+        <a class="quick-action-card text-decoration-none" href="{% url 'invoice_create' %}">
+            <span class="item-title">Create an invoice</span>
+            <span class="item-subtitle">Generate a bill that can later be emailed, tracked, and marked paid.</span>
+        </a>
+        <a class="quick-action-card text-decoration-none" href="{% url 'timeentry_create' %}">
+            <span class="item-title">Log time</span>
+            <span class="item-subtitle">Capture project effort so delivery and profitability stay visible.</span>
+        </a>
     </div>
 </section>
 
@@ -72,7 +105,7 @@
     <div class="col-md-6 col-xl-3">
         <div class="stat-card status-pillar">
             <p class="stat-label">Revenue</p>
-            <p class="stat-value text-numeric">${{ total_revenue }}</p>
+            <p class="stat-value text-numeric">{{ total_revenue|currency }}</p>
             <p class="stat-note">{{ time_entry_hours }} tracked hours behind delivered work.</p>
         </div>
     </div>

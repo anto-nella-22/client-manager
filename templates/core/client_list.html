@@ -9,6 +9,9 @@
         <h1 class="page-title">Clients</h1>
         <p class="page-subtitle">A reusable list page pattern for customer records, company context, and contact details.</p>
     </div>
+    <div class="page-actions">
+        <a class="app-button-primary" href="{% url 'client_create' %}">Add Client</a>
+    </div>
 </section>
 
 <section class="app-card">
@@ -33,7 +36,7 @@
                     {% for client in clients %}
                         <tr>
                             <td>
-                                <span class="item-title">{{ client.name }}</span>
+                                <a class="item-title" href="{% url 'client_update' client.pk %}">{{ client.name }}</a>
                             </td>
                             <td>{{ client.company }}</td>
                             <td>{{ client.email }}</td>
@@ -41,7 +44,9 @@
                         </tr>
                     {% empty %}
                         <tr>
-                            <td colspan="4" class="text-center text-soft py-4">No clients yet.</td>
+                            <td colspan="4">
+                                {% include "core/includes/empty_state.html" with title="No clients yet" body="Create your first client so projects and invoices have a clear owner." primary_url=client_create_url primary_label="Create your first client" %}
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>

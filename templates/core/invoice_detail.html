@@ -1,13 +1,19 @@
 {% extends "base.html" %}
+{% load core_extras %}
 
 {% block title %}{{ invoice.number }} | Client Manager{% endblock %}
 
 {% block content %}
 <section class="page-header">
     <div class="page-heading">
+        {% include "core/includes/breadcrumbs.html" with crumbs=invoice_breadcrumbs %}
         <span class="page-eyebrow">Invoice Detail</span>
         <h1 class="page-title">{{ invoice.number }}</h1>
         <p class="page-subtitle">{{ invoice.project.title }} for {{ invoice.project.client.company }} in a reusable detail-page layout.</p>
+    </div>
+    <div class="page-actions">
+        <a class="app-button-secondary" href="{% url 'invoice_list' %}">Back to Invoices</a>
+        <a class="app-button-tertiary" href="{% url 'invoice_update' invoice.pk %}">Edit Invoice</a>
     </div>
 </section>
 
@@ -20,7 +26,7 @@
                     <h2 class="h3 mb-2">{{ invoice.project.title }}</h2>
                     <p class="muted-copy mb-0">{{ invoice.project.client.company }}</p>
                 </div>
-                <span class="status-badge">{{ invoice.get_status_display }}</span>
+                {% include "core/includes/status_badge.html" with value=invoice.status label=invoice.get_status_display %}
             </div>
             <div class="detail-meta-grid">
                 <div>
@@ -34,8 +40,9 @@
                 <div>
                     <p class="detail-label">Billing</p>
                     <div class="detail-stack">
-                        <p class="data-number">${{ invoice.amount }}</p>
+                        <p class="data-number">{{ invoice.amount|currency }}</p>
                         <p class="detail-value text-soft"><strong>Sent:</strong> {{ invoice.sent_date|default:"Not sent yet" }}</p>
+                        <p class="detail-value text-soft"><strong>Paid:</strong> {{ invoice.paid_date|default:"Not paid yet" }}</p>
                     </div>
                 </div>
             </div>
@@ -52,6 +59,17 @@
                     {% csrf_token %}
                     <button class="app-button-secondary w-100" type="submit">Email Invoice</button>
                 </form>
+                {% for action in status_actions %}
+                    <form method="post" action="{% url 'invoice_status_update' invoice.pk action.status %}">
+                        {% csrf_token %}
+                        <button
+                            class="{% if action.style == 'primary' %}app-button-primary{% elif action.style == 'secondary' %}app-button-secondary{% else %}app-button-tertiary{% endif %} w-100"
+                            type="submit"
+                        >
+                            {{ action.label }}
+                        </button>
+                    </form>
+                {% endfor %}
                 {% if invoice.pdf_file %}
                     <a class="app-button-tertiary" href="{{ invoice.pdf_file.url }}">Saved PDF</a>
                 {% endif %}

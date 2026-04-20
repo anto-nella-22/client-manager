@@ -65,6 +65,7 @@ class Command(BaseCommand):
                 "amount": Decimal("3200.00"),
                 "status": Invoice.Status.PAID,
                 "sent_date": date.today() - timedelta(days=20),
+                "paid_date": date.today() - timedelta(days=17),
             },
         )
         Invoice.objects.get_or_create(
@@ -105,4 +106,3 @@ class Command(BaseCommand):
         )
 
         self.stdout.write(self.style.SUCCESS("Demo data is ready."))
-

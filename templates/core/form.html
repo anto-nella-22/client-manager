@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load core_extras %}
+
+{% block title %}{{ page_title }} | Client Manager{% endblock %}
+
+{% block content %}
+<section class="page-header">
+    <div class="page-heading">
+        {% include "core/includes/breadcrumbs.html" with crumbs=form_breadcrumbs %}
+        <span class="page-eyebrow">{{ page_eyebrow }}</span>
+        <h1 class="page-title">{{ page_title }}</h1>
+        <p class="page-subtitle">{{ page_subtitle }}</p>
+    </div>
+    <div class="page-actions">
+        <a class="app-button-secondary" href="{{ cancel_url }}">Cancel</a>
+    </div>
+</section>
+
+<section class="detail-grid">
+    <div class="detail-panel">
+        <div class="detail-main">
+            <form method="post" enctype="multipart/form-data" class="detail-stack app-form">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                    <div class="alert app-alert">{{ form.non_field_errors }}</div>
+                {% endif %}
+                {% for field in form %}
+                    <div class="form-row-block">
+                        <label class="detail-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <p class="muted-copy mt-2">{{ field.help_text }}</p>
+                        {% endif %}
+                        {% if field.errors %}
+                            <div class="text-danger small mt-2">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <div class="page-actions">
+                    <button class="app-button-primary" type="submit">Save</button>
+                    <a class="app-button-tertiary" href="{{ cancel_url }}">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="detail-panel">
+        <div class="detail-side">
+            <p class="meta-label mb-2">Form Guidance</p>
+            <h2 class="h4 mb-3">Keep records clear and reusable</h2>
+            <div class="detail-stack">
+                <p class="muted-copy">Use concise names and consistent status values so filters, dashboards, and invoices stay easy to scan.</p>
+                <p class="muted-copy">For dates and billing values, enter the most accurate operational data you have. Later workflow screens depend on it.</p>
+                <p class="muted-copy">This form layout is shared so future create and edit screens feel familiar across the product.</p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
